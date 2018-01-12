@@ -30,7 +30,8 @@ def list_page(url):
         item['gif_url'] = gif_keys[i]
         _list.append(item)
         try:
-            downloadImageFile(item['gif_url'], item['vkey'])
+            if 'ph' in item['vkey']:
+                downloadImageFile(item['gif_url'], item['vkey'])
         except Exception as err:
             print(err)
     with open('logs/%s.json' % _time, 'w') as file:
