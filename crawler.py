@@ -2,7 +2,6 @@
 # coding=utf-8
 
 import os
-import time
 import urllib
 import json
 
@@ -11,7 +10,6 @@ from lxml import etree
 import fire
 
 
-_time = time.strftime("%Y-%m-%d-%H:%M", time.localtime())
 headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36',
 }
@@ -34,21 +32,19 @@ def list_page(url):
                 downloadImageFile(item['gif_url'], item['vkey'])
         except Exception as err:
             print(err)
-    with open('logs/%s.json' % _time, 'w') as file:
-        file.write(json.dumps(_list, ensure_ascii=False, indent=4))
 
 
 def downloadImageFile(imgUrl, name):
-    path = 'logs/%s.webm' % name
+    path = 'webm/%s.webm' % name
     tem = os.path.exists(path)
     if tem:
         print('this had download %s' % name)
         return
-    print("Download Image File=", name)
-    r = requests.get(imgUrl, stream=True)  # here we need to set stream = True parameter
+    print("Download webm File:", name)
+    r = requests.get(imgUrl, stream=True)
     with open('webm/%s.webm' % name, 'wb') as f:
         for chunk in r.iter_content(chunk_size=1024):
-            if chunk:  # filter out keep-alive new chunks
+            if chunk:
                 f.write(chunk)
                 f.flush()
         f.close()
@@ -82,11 +78,11 @@ def downloadvideo(url, title):
 
 
 def run(_list=None):
-    paths = ['logs', 'webm', 'mp4']
+    paths = ['webm', 'mp4']
     for path in paths:
         if not os.path.exists(path):
             os.mkdir(path)
-    if _list:
+    if _list=='webm':
         urls = ['https://www.pornhub.com/video?o=tr',
                 'https://www.pornhub.com/video?o=ht']
         for url in urls:
@@ -94,13 +90,23 @@ def run(_list=None):
                 list_page(url)
             except Exception as err:
                 print(err)
-    else:
+    elif _list=='mp4':
         with open('download.txt', 'r') as file:
             keys = list(set(file.readlines()))
         for key in keys:
             url = 'https://www.pornhub.com/view_video.php?viewkey=%s' % key.strip()
             print(url)
             req_detail_page(url)
+    else:
+        _str = """
+        tips:
+            python crawler.py run webm 
+            - 下载热门页面的缩略图，路径为webm文件夹下
+
+            python crawler.py run mp4
+            - 将下载的webm文件对应的以ph开头的文件名逐行写在download.txt中，运行该命令
+        """
+        print(_str)
     print('finish !')
 
 
