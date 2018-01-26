@@ -39,9 +39,9 @@ def downloadImageFile(imgUrl, name):
     path = 'webm/%s.webm' % name
     tem = os.path.exists(path)
     if tem:
-        print('this webm file had been downloaded %s' % name)
+        print('this webm file had been downloaded :: %s' % name)
         return
-    print("downloading webm file:", name)
+    print("downloading webm file :: ", name)
     r = requests.get(imgUrl, stream=True)
     with open('webm/%s.webm' % name, 'wb') as f:
         for chunk in r.iter_content(chunk_size=1024):
@@ -71,8 +71,12 @@ def req_detail_page(url):
 
 
 def downloadvideo(url, title):
+    tem = os.path.exists('mp4/%s.mp4' % title)
+    if tem:
+        print('this mp4 file had been downloaded :: %s' % title)
+        return
     urllib.request.urlretrieve(url, 'mp4/%s.mp4' % title)
-    print('download video success ! %s %s' % (url, title))
+    print('download video success :: %s %s' % (url, title))
 
 
 def run(_list=None):
