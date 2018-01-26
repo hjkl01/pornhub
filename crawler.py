@@ -4,6 +4,7 @@
 import os
 import urllib
 import json
+import re
 
 import requests
 from lxml import etree
@@ -55,21 +56,18 @@ def req_detail_page(url):
     resp = s.get(url, headers=headers)
     html = etree.HTML(resp.content)
     title = ''.join(html.xpath('//h1//text()')).strip()
+
     js = html.xpath('//*[@id="player"]/script/text()')[0]
-    n1 = js.find('{')
-    n2 = js.find('var player_mp4_seek')
-    tem = js[n1:n2].strip().strip(';')
-    # print(tem)
+    tem = re.findall('var\s+\w+\s+=\s+(.*);\s+var player_mp4_seek', js)[-1]
     con = json.loads(tem)
     for _dict in con['mediaDefinitions']:
-        if 'quality' in _dict.keys():
-            if _dict.get('videoUrl'):
-                print(_dict.get('quality'), _dict.get('videoUrl'))
-                try:
-                    downloadvideo(_dict.get('videoUrl'), title)
-                    break
-                except Exception as err:
-                    print(err)
+        if 'quality' in _dict.keys() and _dict.get('videoUrl'):
+            print(_dict.get('quality'), _dict.get('videoUrl'))
+            try:
+                downloadvideo(_dict.get('videoUrl'), title)
+                break
+            except Exception as err:
+                print(err)
 
 
 def downloadvideo(url, title):
@@ -99,12 +97,12 @@ def run(_list=None):
             req_detail_page(url)
     else:
         _str = """
-        tips:
-            python crawler.py run webm 
-            - 下载热门页面的缩略图，路径为webm文件夹下
+tips:
+    python crawler.py run webm 
+        - 下载热门页面的缩略图，路径为webm文件夹下
 
-            python crawler.py run mp4
-            - 将下载的webm文件对应的以ph开头的文件名逐行写在download.txt中，运行该命令
+    python crawler.py run mp4
+        - 将下载的webm文件对应的以ph开头的文件名逐行写在download.txt中，运行该命令
         """
         print(_str)
     print('finish !')
