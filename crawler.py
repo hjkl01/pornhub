@@ -79,12 +79,12 @@ def downloadvideo(url, title):
     print('download video success :: %s %s' % (url, title))
 
 
-def run(_list=None):
+def run(_arg=None):
     paths = ['webm', 'mp4']
     for path in paths:
         if not os.path.exists(path):
             os.mkdir(path)
-    if _list=='webm':
+    if _arg=='webm':
         urls = ['https://www.pornhub.com/video?o=tr',
                 'https://www.pornhub.com/video?o=ht']
         for url in urls:
@@ -92,7 +92,7 @@ def run(_list=None):
                 list_page(url)
             except Exception as err:
                 print(err)
-    elif _list=='mp4':
+    elif _arg=='mp4':
         with open('download.txt', 'r') as file:
             keys = list(set(file.readlines()))
         for key in keys:
