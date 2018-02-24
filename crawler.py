@@ -12,7 +12,8 @@ from lxml import etree
 import fire
 
 headers = {
-    'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36',
+    'User-Agent':
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36',
 }
 
 
@@ -71,7 +72,9 @@ def run(_arg=None):
             os.mkdir(path)
     if _arg == 'webm':
         # 这是只放了两个分类链接 如需添加 请移步 https://www.pornhub.com/categories
-        urls = ['https://www.pornhub.com/video?o=tr', 'https://www.pornhub.com/video?o=ht']
+        urls = [
+            'https://www.pornhub.com/video?o=tr', 'https://www.pornhub.com/video?o=ht', 'https://www.pornhub.com/video'
+        ]
         jobs = [gevent.spawn(list_page, url) for url in urls]
         gevent.joinall(jobs)
     elif _arg == 'mp4':
