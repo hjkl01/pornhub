@@ -10,6 +10,8 @@ import gevent
 import requests
 from lxml import etree
 import fire
+from dumblog import dlog
+logger = dlog(__file__, console='info')
 
 headers = {
     'User-Agent':
@@ -18,7 +20,7 @@ headers = {
 
 
 def list_page(url):
-    print('crawling : %s' % url)
+    logger.info('crawling : %s' % url)
     resp = requests.get(url, headers=headers)
     html = etree.HTML(resp.text)
     vkeys = html.xpath('//*[@class="phimage"]/div/a/@href')
@@ -32,7 +34,7 @@ def list_page(url):
             if 'ph' in item['vkey']:
                 jobs.append(gevent.spawn(download, item['gif_url'], item['vkey'], 'webm'))
         except Exception as err:
-            print(err)
+            logger.error(err)
     gevent.joinall(jobs, timeout=2)
 
 
@@ -43,26 +45,26 @@ def detail_page(url):
     title = ''.join(html.xpath('//h1//text()')).strip()
 
     js = html.xpath('//*[@id="player"]/script/text()')[0]
-    tem = re.findall('var\s+\w+\s+=\s+(.*);\s+var player_mp4_seek', js)[-1]
+    tem = re.findall('var\\s+\\w+\\s+=\\s+(.*);\\s+var player_mp4_seek', js)[-1]
     con = json.loads(tem)
 
     for _dict in con['mediaDefinitions']:
         if 'quality' in _dict.keys() and _dict.get('videoUrl'):
-            print(_dict.get('quality'), _dict.get('videoUrl'))
+            logger.info('%s %s' % (_dict.get('quality'), _dict.get('videoUrl')))
             try:
                 download(_dict.get('videoUrl'), title, 'mp4')
-                break    #如下载了较高分辨率的视频 就跳出循环
+                break  # 如下载了较高分辨率的视频 就跳出循环
             except Exception as err:
-                print(err)
+                logger.error(err)
 
 
 def download(url, name, filetype):
     filepath = '%s/%s.%s' % (filetype, name, filetype)
     if os.path.exists(filepath):
-        print('this file had been downloaded :: %s' % (filepath))
+        logger.warn('this file had been downloaded :: %s' % (filepath))
         return
     urllib.request.urlretrieve(url, '%s' % (filepath))
-    print('download success :: %s' % (filepath))
+    logger.info('download success :: %s' % (filepath))
 
 
 def run(_arg=None):
@@ -71,9 +73,10 @@ def run(_arg=None):
         if not os.path.exists(path):
             os.mkdir(path)
     if _arg == 'webm':
-        # 这是只放了两个分类链接 如需添加 请移步 https://www.pornhub.com/categories
+        # https://www.pornhub.com/categories
         urls = [
-            'https://www.pornhub.com/video?o=tr', 'https://www.pornhub.com/video?o=ht', 'https://www.pornhub.com/video'
+            'https://www.pornhub.com/video?o=tr', 'https://www.pornhub.com/video?o=ht',
+            'https://www.pornhub.com/video?o=mv', 'https://www.pornhub.com/video'
         ]
         jobs = [gevent.spawn(list_page, url) for url in urls]
         gevent.joinall(jobs)
@@ -83,20 +86,20 @@ def run(_arg=None):
         jobs = []
         for key in keys:
             url = 'https://www.pornhub.com/view_video.php?viewkey=%s' % key.strip()
-            print(url)
+            logger.info(url)
             jobs.append(gevent.spawn(detail_page, url))
         gevent.joinall(jobs, timeout=2)
     else:
         _str = """
 tips:
-    python crawler.py run webm 
+    python crawler.py run webm
         - 下载热门页面的缩略图，路径为webm文件夹下
 
     python crawler.py run mp4
         - 将下载的webm文件对应的以ph开头的文件名逐行写在download.txt中，运行该命令
         """
-        print(_str)
-    print('finish !')
+        logger.info(_str)
+    logger.info('finish !')
 
 
 if __name__ == '__main__':

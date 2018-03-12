@@ -104,9 +104,8 @@ web/upload/*
 *.png
 *.yaml
 
-download.txt
+download*
 *.zip
 mp4/
 webm/
 nohup.out
-download*
