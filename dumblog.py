@@ -20,7 +20,7 @@ class DumbFormatter(logging.Formatter):
         return s
 
 
-def dlog(name, logLevel=None, console=None):
+def dlog(name=__file__, logLevel=None, console='info'):
     name = name.split('/')[-1].split('.')[0]
     logger = logging.getLogger(name)
     levels = {

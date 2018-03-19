@@ -11,7 +11,7 @@ import requests
 from lxml import etree
 import fire
 from dumblog import dlog
-logger = dlog(__file__, console='info')
+logger = dlog(__file__)
 
 headers = {
     'User-Agent':
