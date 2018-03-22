@@ -80,6 +80,15 @@ def run(_arg=None):
         ]
         jobs = [gevent.spawn(list_page, url) for url in urls]
         gevent.joinall(jobs)
+    if _arg == 'link':
+        path = 'webm'
+        dir = os.listdir(path)  # dir是目录下的全部文件
+        fopen = open('download.txt', 'w')
+        for d in dir:
+            string = d + '\n'  # 换行
+            new_string = string.replace('.webm', '')  # 删掉后缀
+            fopen.write(new_string)
+        fopen.close()
     elif _arg == 'mp4':
         with open('download.txt', 'r') as file:
             keys = list(set(file.readlines()))
