@@ -1,6 +1,6 @@
 版本：python 3
 
-cd pornhub
+cd pornhub &&
 pip install -r requirements.txt
 
 python crawler.py
