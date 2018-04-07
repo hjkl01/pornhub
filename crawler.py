@@ -60,49 +60,40 @@ def download(url, name, filetype):
     if os.path.exists(filepath):
         print('this file had been downloaded :: %s' % (filepath))
         return
-    urllib.request.urlretrieve(url, '%s' % (filepath))
-    print('download success :: %s' % (filepath))
+    #urllib.request.urlretrieve(url, '%s' % (filepath))
 
+    if 'mp4' in url:
+        f = open('download_link.txt', 'a+')
+        f.read()
+        f.write(url + '\n')
+        f.close()
+        print('Fink the real links of  %s' % (filepath))
 
-def run(_arg=None):
-    paths = ['webm', 'mp4']
-    for path in paths:
-        if not os.path.exists(path):
-            os.mkdir(path)
-    if _arg == 'webm':
-        # 这是只放了两个分类链接 如需添加 请移步 https://www.pornhub.com/categories
-        urls = ['https://www.pornhub.com/video?o=tr', 'https://www.pornhub.com/video?o=ht']
-        jobs = [gevent.spawn(list_page, url) for url in urls]
-        gevent.joinall(jobs)
-    if _arg == 'link':
-        path = 'webm'
-        dir = os.listdir(path)  # dir是目录下的全部文件
-        fopen = open('download.txt', 'w')
-        for d in dir:
-            string = d + '\n'  # 换行
-            new_string = string.replace('.webm', '')  # 删掉后缀
-            fopen.write(new_string)
-        fopen.close()
-    elif _arg == 'mp4':
-        with open('download.txt', 'r') as file:
-            keys = list(set(file.readlines()))
-        jobs = []
-        for key in keys:
-            url = 'https://www.pornhub.com/view_video.php?viewkey=%s' % key.strip()
-            print(url)
-            jobs.append(gevent.spawn(detail_page, url))
-        gevent.joinall(jobs, timeout=2)
-    else:
-        _str = """
-tips:
-    python crawler.py run webm 
-        - 下载热门页面的缩略图，路径为webm文件夹下
+# 这是只放了两个分类链接 如需添加 请移步 https://www.pornhub.com/categories
+urls = ['https://www.pornhub.com/video?o=tr', 'https://www.pornhub.com/video?o=ht',
+        'https://www.pornhub.com/video?o=mv', 'https://www.pornhub.com/video?c=8',
+        'https://www.pornhub.com/video?c=111', 'https://www.pornhub.com/video?p=homemade']
+jobs = [gevent.spawn(list_page, url) for url in urls]
+gevent.joinall(jobs)
 
-    python crawler.py run mp4
-        - 将下载的webm文件对应的以ph开头的文件名逐行写在download.txt中，运行该命令
-        """
-        print(_str)
-    print('finish !')
+path = 'webm'
+dir = os.listdir(path)                  # dir是目录下的全部文件
+fopen = open('download.txt', 'w')
+for d in dir:
+    string = d + '\n'    				#换行
+    new_string=string.replace('.webm', '') #删掉后缀
+    fopen.write(new_string)
+fopen.close()
+
+with open('download.txt', 'r') as file:
+    keys = list(set(file.readlines()))
+jobs = []
+for key in keys:
+    url = 'https://www.pornhub.com/view_video.php?viewkey=%s' % key.strip()
+    print(url)
+    jobs.append(gevent.spawn(detail_page, url))
+gevent.joinall(jobs, timeout=2)
+
 
 
 if __name__ == '__main__':
