@@ -1,5 +1,5 @@
 #  pornhub spider
-### Fogg Behavior Model 我提供一个吧
+### Motivation Ability Trigger 我提供一个吧
 
 ## 用法简介
 
