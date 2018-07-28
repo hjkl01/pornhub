@@ -13,4 +13,5 @@
 
 ## The most important : 请准备好足够多的营养快线
 
-<img src="https://github.com/killmymates/Pornhub/blob/master/img/zhifubao.img?raw=true" width = "250" height = "200" alt="图片名称" align=center />
+## 我！ 开发者！ 打钱！
+<img src="https://raw.githubusercontent.com/killmymates/Pornhub/master/png/zhifubao.png" width = "250" height = "200" alt="图片名称" align=center />
