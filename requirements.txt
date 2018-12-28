@@ -1,5 +1,4 @@
 requests
 lxml
 fire
-gevent
 loguru
