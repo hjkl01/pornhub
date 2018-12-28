@@ -10,8 +10,8 @@ import gevent
 import requests
 from lxml import etree
 import fire
-from dumblog import dlog
-logger = dlog(__file__)
+from loguru import logger
+logger.add("logs/%s.log" % __file__.rstrip('.py'), format="{time:MM-DD HH:mm:ss} {level} {message}")
 
 headers = {
     'User-Agent':
@@ -32,7 +32,7 @@ def list_page(url):
         item['gif_url'] = gif_keys[i]
         try:
             if 'ph' in item['vkey']:
-                jobs.append(gevent.spawn(download, item['gif_url'], item['vkey'], 'webm'))
+                jobs.append(gevent.spawn(download, item['gif_url'], item['vkey'],'webm'))
         except Exception as err:
             logger.error(err)
     gevent.joinall(jobs, timeout=2)
@@ -45,7 +45,7 @@ def detail_page(url):
     title = ''.join(html.xpath('//h1//text()')).strip()
 
     js = html.xpath('//*[@id="player"]/script/text()')[0]
-    tem = re.findall('var\\s+\\w+\\s+=\\s+(.*);\\s+var player_mp4_seek', js)[-1]
+    tem = re.findall('var\\s+\\w+\\s+=\\s+(.*);\\s+var player_mp4_seek',js)[-1]
     con = json.loads(tem)
 
     for _dict in con['mediaDefinitions']:
@@ -61,10 +61,10 @@ def detail_page(url):
 def download(url, name, filetype):
     filepath = '%s/%s.%s' % (filetype, name, filetype)
     if os.path.exists(filepath):
-        logger.warn('this file had been downloaded :: %s' % (filepath))
+        logger.info('this file had been downloaded :: %s' % filepath)
         return
-    urllib.request.urlretrieve(url, '%s' % (filepath))
-    logger.info('download success :: %s' % (filepath))
+    urllib.request.urlretrieve(url, '%s' % filepath)
+    logger.info('download success :: %s' % filepath)
 
 
 def run(_arg=None):
@@ -75,8 +75,10 @@ def run(_arg=None):
     if _arg == 'webm':
         # https://www.pornhub.com/categories
         urls = [
-            'https://www.pornhub.com/video?o=tr', 'https://www.pornhub.com/video?o=ht',
-            'https://www.pornhub.com/video?o=mv', 'https://www.pornhub.com/video'
+            'https://www.pornhub.com/video?o=tr',
+            'https://www.pornhub.com/video?o=ht',
+            'https://www.pornhub.com/video?o=mv',
+            'https://www.pornhub.com/video'
         ]
         jobs = [gevent.spawn(list_page, url) for url in urls]
         gevent.joinall(jobs)
