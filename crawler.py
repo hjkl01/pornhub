@@ -6,7 +6,7 @@ import urllib
 import json
 import re
 
-import gevent
+import multiprocessing
 import requests
 from lxml import etree
 import fire
@@ -25,17 +25,19 @@ def list_page(url):
     html = etree.HTML(resp.text)
     vkeys = html.xpath('//*[@class="phimage"]/div/a/@href')
     gif_keys = html.xpath('//*[@class="phimage"]/div/a/img/@data-mediabook')
-    jobs = []
+    # jobs = []
     for i in range(len(vkeys)):
         item = {}
         item['vkey'] = vkeys[i].split('=')[-1]
         item['gif_url'] = gif_keys[i]
         try:
             if 'ph' in item['vkey']:
-                jobs.append(gevent.spawn(download, item['gif_url'], item['vkey'],'webm'))
+                # jobs.append(gevent.spawn(download, item['gif_url'], item['vkey'],'webm'))
+                p = multiprocessing.Process(target=download, args=(item['gif_url'], item['vkey'], 'webm'))
+                p.start()
         except Exception as err:
             logger.error(err)
-    gevent.joinall(jobs, timeout=2)
+    # gevent.joinall(jobs, timeout=2)
 
 
 def detail_page(url):
@@ -80,29 +82,37 @@ def run(_arg=None):
             'https://www.pornhub.com/video?o=mv',
             'https://www.pornhub.com/video'
         ]
-        jobs = [gevent.spawn(list_page, url) for url in urls]
-        gevent.joinall(jobs)
+        # jobs = [gevent.spawn(list_page, url) for url in urls]
+        # gevent.joinall(jobs)
+        for url in urls:
+            p = multiprocessing.Process(target=list_page, args=(url, ))
+            p.start()
     elif _arg == 'mp4':
         with open('download.txt', 'r') as file:
             keys = list(set(file.readlines()))
-        jobs = []
+        # jobs = []
         for key in keys:
+            if not key.strip():
+                continue
             url = 'https://www.pornhub.com/view_video.php?viewkey=%s' % key.strip()
-            logger.info(url)
-            jobs.append(gevent.spawn(detail_page, url))
-        gevent.joinall(jobs, timeout=2)
+            logger.info('url: {}', url)
+            # jobs.append(gevent.spawn(detail_page, url))
+            p = multiprocessing.Process(target=detail_page, args=(url, ))
+            p.start()
+        # gevent.joinall(jobs, timeout=2)
     else:
         _str = """
 tips:
-    python crawler.py run webm
+    python crawler.py webm
         - 下载热门页面的缩略图，路径为webm文件夹下
 
-    python crawler.py run mp4
+    python crawler.py mp4
         - 将下载的webm文件对应的以ph开头的文件名逐行写在download.txt中，运行该命令
         """
         logger.info(_str)
-    logger.info('finish !')
+    logger.info('Using multiprocessing, commands send to system, please wait a moment.')
+    logger.info('Maybe there is some error, leave it alone.')
 
 
 if __name__ == '__main__':
-    fire.Fire()
+    fire.Fire(run)
