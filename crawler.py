@@ -110,6 +110,7 @@ tips:
         - 将下载的webm文件对应的以ph开头的文件名逐行写在download.txt中，运行该命令
         """
         logger.info(_str)
+        return
     logger.info('Using multiprocessing, commands send to system, please wait a moment.')
     logger.info('Maybe there is some error, leave it alone.')
 
