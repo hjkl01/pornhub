@@ -11,6 +11,8 @@
 - 把后缀放到download.txt里，运行```python crawler.py mp4```, 在MP4文件夹可看到下载好的MP4文件
 
 
-##### [aliyun链接 我的邀请码](https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=4bkl2w99)
+##### [aliyun邀请码](https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=4bkl2w99)
 
-##### [bandwagon链接 我的邀请码](https://bandwagonhost.com/aff.php?aff=40195)
+##### [bandwagon邀请码](https://bandwagonhost.com/aff.php?aff=40195)
+
+##### [shadowsocks邀请码](https://portal.shadowsocks.ch/aff.php?aff=24252)
