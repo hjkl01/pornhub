@@ -1,4 +1,5 @@
 requests
 lxml
+js2py
 fire
 loguru
