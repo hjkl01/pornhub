@@ -6,7 +6,7 @@ import re
 import js2py
 import requests
 from lxml import etree
-from tqdm import tqdm
+from clint.textui import progress
 import fire
 from loguru import logger
 logger.add("logs/%s.log" % __file__.rstrip('.py'),
@@ -82,9 +82,17 @@ def download(url, name, filetype):
         return
     else:
         response = requests.get(url, headers=headers, proxies=proxies, stream=True)
-        with open(filepath, "wb") as handle:
-            for data in tqdm(response.iter_content()):
-                handle.write(data)
+        with open(filepath, "wb") as file:
+            total_length = int(response.headers.get('content-length'))
+            for ch in progress.bar(response.iter_content(chunk_size=2391975),
+                                   expected_size=(total_length / 1024) + 1):
+                if ch:
+                    file.write(ch)
+
+        # from tqdm import tqdm
+        # with open(filepath, "wb") as handle:
+        #     for data in tqdm(response.iter_content()):
+        #         handle.write(data)
 
         # rep = requests.get(url, headers=headers, proxies=proxies)
         # with open(filepath, 'wb') as file:
