@@ -67,7 +67,7 @@ def exeJs(js):
     if res.quality_720p:
         return res.quality_720p
     elif res.quality_480p:
-        return res.quality_480p_
+        return res.quality_480p
     elif res.quality_240p:
         return res.quality_240p
     else:
