@@ -6,6 +6,7 @@ import re
 import js2py
 import requests
 from lxml import etree
+from tqdm import tqdm
 import fire
 from loguru import logger
 logger.add("logs/%s.log" % __file__.rstrip('.py'),
@@ -80,9 +81,14 @@ def download(url, name, filetype):
         logger.info('this file had been downloaded :: %s' % filepath)
         return
     else:
-        rep = requests.get(url, headers=headers, proxies=proxies)
-        with open(filepath, 'wb') as file:
-            file.write(rep.content)
+        response = requests.get(url, headers=headers, proxies=proxies, stream=True)
+        with open(filepath, "wb") as handle:
+            for data in tqdm(response.iter_content()):
+                handle.write(data)
+
+        # rep = requests.get(url, headers=headers, proxies=proxies)
+        # with open(filepath, 'wb') as file:
+        #     file.write(rep.content)
         # urllib.request.urlretrieve(url, '%s' % filepath)
         logger.info('download success :: %s' % filepath)
 
