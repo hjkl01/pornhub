@@ -11,4 +11,5 @@
 - 把后缀放到download.txt里，运行```python crawler.py mp4```, 在MP4文件夹可看到下载好的MP4文件
 
 
+##### [vultr邀请码](https://www.vultr.com/?ref=7378179)
 ##### [shadowsocks邀请码](https://portal.shadowsocks.center/aff.php?aff=24252)
