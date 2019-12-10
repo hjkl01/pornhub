@@ -1,7 +1,3 @@
-#  pornhub spider
-### Motivation Ability Trigger 我提供一个吧
-
-## 用法简介
 
 - ```本项目适用于py3```
 - ```git clone https://github.com/killmymates/Pornhub ```
