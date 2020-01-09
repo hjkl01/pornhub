@@ -8,4 +8,5 @@
 
 
 ##### [vultr邀请码](https://www.vultr.com/?ref=7378179)
-##### [shadowsocks邀请码](https://order.shadowsocks.nl/aff.php?aff=24252)
+##### [shadowsocks邀请码](https://portal.shadowsocks.nl/aff.php?aff=24252)
+
