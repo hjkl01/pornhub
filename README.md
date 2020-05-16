@@ -8,7 +8,7 @@
 
 - ```运行在浏览器```
     - [安装油猴](http://tampermonkey.net/)
-    - Create a new script, copy and paste the [code](https://raw.githubusercontent.com/formateddd/pornhub/master/tampermonket.js).
+    - Create a new script, copy and paste the [code](https://raw.githubusercontent.com/formateddd/pornhub/master/tampermonkey.js).
     
 
 - [vultr邀请码](https://www.vultr.com/?ref=7378179)
