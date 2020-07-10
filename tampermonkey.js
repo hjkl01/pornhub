@@ -25,7 +25,8 @@
 
     for (var i in qualites) {
         if (window[qualites[i]]){
-            document.querySelector("h1").innerHTML += '<a href=' + window.quality_720p + '>' + qualites[i] + '</a>'
+            document.querySelector("h1").innerHTML += '<a href=' + window[qualites[i]] + '>' + qualites[i] + '</a>'
+            console.info(window.qualites[i]);
             break
         }
     }
