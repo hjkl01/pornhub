@@ -16,8 +16,7 @@ logger.add(
 )
 
 headers = {
-    "User-Agent":
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36",
 }
 proxies = {}
 
@@ -34,15 +33,16 @@ def list_page(url):
     logger.info("crawling : %s" % url)
     resp = requests.get(url, headers=headers, proxies=proxies, verify=False)
     html = etree.HTML(resp.text)
-    vkeys = html.xpath('//*[@class="phimage"]/div/a/@href')
-    gif_keys = html.xpath('//*[@class="phimage"]/div/a/img/@data-mediabook')
-    for i in range(len(vkeys)):
-        item = {}
-        item["vkey"] = vkeys[i].split("=")[-1]
-        item["gif_url"] = gif_keys[i]
+
+    buff = '//*[@class="phimage"]/a/'
+    names = html.xpath(f"{buff}@href")
+    urls = html.xpath(f"{buff}img/@data-mediabook")
+    for i in range(len(urls)):
         try:
-            if "ph" in item["vkey"]:
-                download(item["gif_url"], item["vkey"], "webm")
+            url = urls[i]
+            name = re.findall("=ph(\w+)", names[i])[-1]
+            logger.info(f"{url} {name}")
+            download(url, name, "webm")
         except Exception as err:
             logger.error(err)
 
@@ -56,22 +56,19 @@ def detail_page(url):
     logger.info(title)
 
     js_temp = html.xpath("//script/text()")
-    for js in js_temp:
-        with open('logs/test.js', 'a') as file:
-            file.write(js + '\n')
     for j in js_temp:
         if "flashvars" in j:
             videoUrl = exeJs(j)
-            logger.info(videoUrl)
+            # logger.debug(videoUrl)
             download(videoUrl, title, "mp4")
             continue
 
 
 def exeJs(js):
-    flashvars = re.findall('flashvars_\d+', js)[0]
-    js = ''.join(js.split('\n\t')[:-5]).strip()
+    flashvars = re.findall("flashvars_\d+", js)[0]
+    js = "".join(js.split("\n\t")[:-5]).strip()
     # logger.debug(js)
-    logger.info(flashvars)
+    # logger.debug(flashvars)
     res = js2py.eval_js(js + flashvars)
     # logger.debug(res)
     if res.quality_720p:
@@ -85,20 +82,18 @@ def exeJs(js):
 
 
 def download(url, name, filetype):
+    logger.info(f"{url} {name} {filetype}")
     filepath = "%s/%s.%s" % (filetype, name, filetype)
     if os.path.exists(filepath):
         logger.info("this file had been downloaded :: %s" % filepath)
         return
     else:
-        response = requests.get(url,
-                                headers=headers,
-                                proxies=proxies,
-                                stream=True)
+        response = requests.get(url, headers=headers, proxies=proxies, stream=True)
         with open(filepath, "wb") as file:
             total_length = int(response.headers.get("content-length"))
             for ch in progress.bar(
-                    response.iter_content(chunk_size=2391975),
-                    expected_size=(total_length / 1024) + 1,
+                response.iter_content(chunk_size=2391975),
+                expected_size=(total_length / 1024) + 1,
             ):
                 if ch:
                     file.write(ch)
@@ -123,20 +118,22 @@ def run(_arg=None):
     if _arg == "webm":
         # https://www.pornhub.com/categories
         urls = [
-            # 'https://www.pornhub.com/video?o=tr', 'https://www.pornhub.com/video?o=ht',
-            # 'https://www.pornhub.com/video?o=mv', 'https://www.pornhub.com/video'
-            "https://cn.pornhub.com/playlist/100503721"
+            # "https://www.pornhub.com/video?o=tr",
+            # "https://www.pornhub.com/video?o=ht",
+            # "https://www.pornhub.com/video?o=mv",
+            "https://www.pornhub.com/video",
         ]
         for url in urls:
             list_page(url)
     elif _arg == "mp4":
         with open("download.txt", "r") as file:
             keys = list(set(file.readlines()))
+        logger.info(keys)
+        keys += [d.strip(".webm") for d in os.listdir("webm/")]
         for key in keys:
             if not key.strip():
                 continue
-            url = "https://www.pornhub.com/view_video.php?viewkey=%s" % key.strip(
-            )
+            url = "https://www.pornhub.com/view_video.php?viewkey=ph%s" % key.strip()
             logger.info("url: {}", url)
             detail_page(url)
     else:
@@ -146,7 +143,8 @@ tips:
         - 下载热门页面的缩略图，路径为webm文件夹下
 
     python crawler.py mp4
-        - 将下载的webm文件对应的以ph开头的文件名逐行写在download.txt中，运行该命令
+        - 该命令会下载webm文件下对应的mp4文件
+        - 也可以将目标地址写入download.txt中
         """
         logger.info(_str)
         return
