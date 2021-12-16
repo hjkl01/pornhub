@@ -1,0 +1,9 @@
+proxy_url = ''
+
+urls = [
+  # https://www.pornhub.com/categories
+
+  # "https://www.pornhub.com/video?o=tr",
+  # "https://www.pornhub.com/video?o=ht",
+  "https://www.pornhub.com/video?o=mv",
+]
