@@ -28,7 +28,7 @@ def get_webm(url):
     resp = requests.get(url, headers=headers, proxies=proxies, verify=False)
     html = etree.HTML(resp.text)
 
-    buff = '//*[@class="phimage"]/a/'
+    buff = '//*[@id="moreData"]//*[@class="phimage"]/a/'
     names = html.xpath(f"{buff}@href")
     urls = html.xpath(f"{buff}img/@data-mediabook")
     for i in range(len(urls)):
@@ -57,7 +57,8 @@ def download(url, name, filetype):
 
 
 def get_mp4(urls):
-    ydl_opts = {'ignoreerrors': True, 'proxy': settings.proxy_url}
+    #  https://github.com/ytdl-org/youtube-dl/blob/master/README.md#output-template
+    ydl_opts = {'ignoreerrors': True, 'outtmpl': 'mp4/%(extractor)s-%(id)s-%(title)s.%(ext)s', 'proxy': settings.proxy_url}
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download(urls)
 
@@ -72,9 +73,7 @@ def run(_arg=None):
         for url in urls:
             get_webm(url)
     elif _arg == "mp4":
-        with open("download.txt", "r") as file:
-            keys = list(set(file.readlines()))
-        keys += [d.strip(".webm") for d in os.listdir("webm/")]
+        keys = [d.strip(".webm") for d in os.listdir("webm/")]
         logger.info(keys)
         urls = ["https://www.pornhub.com/view_video.php?viewkey=ph%s" % key.strip() for key in keys]
         get_mp4(urls)
