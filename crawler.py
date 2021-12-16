@@ -57,7 +57,7 @@ def download(url, name, filetype):
 
 
 def get_mp4(urls):
-    ydl_opts = {'proxy': settings.proxy_url}
+    ydl_opts = {'ignoreerrors': True, 'proxy': settings.proxy_url}
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download(urls)
 
