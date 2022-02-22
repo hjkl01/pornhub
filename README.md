@@ -15,3 +15,6 @@ python crawler.py mp4
 - 可以在 [vultr](https://www.vultr.com/?ref=7378179) 上申请1小时的机器,下载完成后用scp download到本地
 - 使用Trojan: [shadowsocks邀请码](https://portal.shadowsocks.nl/aff.php?aff=24252)
 - 项目中用到了[youtube-dl](https://github.com/ytdl-org/youtube-dl)
+
+
+![stars](https://starchart.cc/lesssound/pornhub.svg)
